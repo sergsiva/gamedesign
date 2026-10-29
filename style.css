@@ -674,3 +674,12 @@ html.dk-lock,body.dk-lock{overflow:hidden}
   .dk-bar{padding:12px 56px 12px 16px}
   .dk-bar-nav .dk-navb{padding:7px 9px}
 }
+
+/* ---------- текст из Word ---------- */
+.dk-body{margin:0}
+.dk-body p{margin:0 0 .9em;color:var(--text-2);font-size:15px;line-height:1.6}
+.dk-body ul,.dk-body ol{margin:0 0 .9em;padding-left:1.2em;color:var(--text-2);font-size:15px;line-height:1.6}
+.dk-body li{margin-bottom:.35em}
+.dk-body strong{color:var(--text)}
+.dk-body a{color:var(--glow)}
+.dk-body img{display:block;max-width:100%;height:auto;border-radius:12px;margin:14px 0}

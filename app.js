@@ -72,6 +72,41 @@ function parseCSV(text){
   return rows.filter(r => r.some(c => c.trim() !== ''));
 }
 
+/* разбор docx: заголовок 2 уровня = начало секции, всё до первого заголовка = вступление */
+function splitDoc(html){
+  const root = new DOMParser().parseFromString(html, 'text/html').body;
+  const lead = [];
+  const secs = [];
+  let cur = null;
+  [...root.children].forEach(el => {
+    if (el.tagName === 'H2'){
+      cur = { h: el.textContent.trim(), nodes: [] };
+      secs.push(cur);
+    } else if (cur){
+      cur.nodes.push(el.outerHTML);
+    } else {
+      lead.push(el.textContent.trim());
+    }
+  });
+  return {
+    lead: lead.filter(Boolean).join(' '),
+    sections: secs.map(x => ({ h: x.h, html: x.nodes.join('') }))
+  };
+}
+
+async function readDoc(name){
+  if (!name) return null;
+  try {
+    const res = await fetch(name, { cache: 'no-store' });
+    if (!res.ok) throw new Error(name + ': ' + res.status);
+    const { value } = await mammoth.convertToHtml({ arrayBuffer: await res.arrayBuffer() });
+    return splitDoc(value);
+  } catch (e){
+    console.warn('Не прочитан docx:', e);
+    return null;
+  }
+}
+
 async function loadContent(){
   const res = await fetch('content.csv', { cache: 'no-store' });
   if (!res.ok) throw new Error('content.csv: ' + res.status);
@@ -125,6 +160,20 @@ async function loadContent(){
       link:   raw(p + 'link')
     };
   });
+
+  await Promise.all(CASES.map(async c => {
+    const p = 'case.' + c.id + '.';
+    const ru = await readDoc(raw(p + 'doc'));
+    if (!ru) return;                                   // docx нет — остаются секции из CSV
+    const en = await readDoc(raw(p + 'doc_en'));
+    const n = Math.max(ru.sections.length, en ? en.sections.length : 0);
+    c.sections = Array.from({ length: n }, (_, i) => {
+      const a = ru.sections[i] || { h: '', html: '' };
+      const b = (en && en.sections[i]) || { h: '', html: '' };
+      return { h: { ru: a.h, en: b.h }, text: { ru: a.html, en: b.html }, shot: '', side: false, html: true };
+    });
+    if (!c.lead && ru.lead) c.lead = { ru: ru.lead, en: en ? en.lead : '' };
+  }));
 
   const CV = {
     id: 'cv',
@@ -425,7 +474,7 @@ function sectionHtml(b, empties){
   return `<div class="dk-sec${b.side ? ' is-side' : ''}">
     <div class="dk-sec-txt">
       ${b.h ? `<h3>${t(b.h)}</h3>` : ''}
-      ${b.text ? `<p>${t(b.text)}</p>` : ''}
+      ${b.text ? (b.html ? `<div class="dk-body">${t(b.text)}</div>` : `<p>${t(b.text)}</p>`) : ''}
     </div>
     ${pic}
   </div>`;

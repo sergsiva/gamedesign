@@ -72,25 +72,66 @@ function parseCSV(text){
   return rows.filter(r => r.some(c => c.trim() !== ''));
 }
 
-/* разбор docx: заголовок 2 уровня = начало секции, всё до первого заголовка = вступление */
-function splitDoc(html){
-  const root = new DOMParser().parseFromString(html, 'text/html').body;
-  const lead = [];
-  const secs = [];
+/* разбор Markdown: "## " = начало секции, всё до первого "## " = вступление, "# " — заголовок файла */
+function escHtml(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function inlineMd(s){
+  return escHtml(s)
+    .replace(/!\[([^\]]*)\]\(([^)\s]+)\)/g, '<img src="$2" alt="$1">')
+    .replace(/\[([^\]]+)\]\(([^)\s]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>')
+    .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+    .replace(/(^|[^*])\*([^*\s][^*]*)\*/g, '$1<em>$2</em>');
+}
+
+function mdToHtml(lines){
+  const out = [];
+  let para = [], list = null;
+  const flushPara = () => { if (para.length){ out.push('<p>' + inlineMd(para.join(' ')) + '</p>'); para = []; } };
+  const flushList = () => {
+    if (list){ out.push('<' + list.tag + '>' + list.items.map(x => '<li>' + inlineMd(x) + '</li>').join('') + '</' + list.tag + '>'); list = null; }
+  };
+  lines.forEach(raw => {
+    const line = raw.trim();
+    if (!line){ flushPara(); flushList(); return; }
+    const ul = line.match(/^[-*]\s+(.*)$/), ol = line.match(/^\d+[.)]\s+(.*)$/);
+    if (ul || ol){
+      flushPara();
+      const tag = ul ? 'ul' : 'ol', text = (ul || ol)[1];
+      if (!list || list.tag !== tag){ flushList(); list = { tag, items: [] }; }
+      list.items.push(text);
+      return;
+    }
+    flushList();
+    const h3 = line.match(/^###\s+(.*)$/);
+    if (h3){ flushPara(); out.push('<h4>' + inlineMd(h3[1]) + '</h4>'); return; }
+    if (line.startsWith('![')){ flushPara(); out.push('<p>' + inlineMd(line) + '</p>'); return; }
+    para.push(line);
+  });
+  flushPara(); flushList();
+  return out.join('');
+}
+
+function splitMd(text){
+  const lead = [], secs = [];
   let cur = null;
-  [...root.children].forEach(el => {
-    if (el.tagName === 'H2'){
-      cur = { h: el.textContent.trim(), nodes: [] };
+  text.replace(/\r/g, '').split('\n').forEach(line => {
+    if (/^##\s+/.test(line)){
+      cur = { h: line.replace(/^##\s+/, '').trim(), lines: [] };
       secs.push(cur);
-    } else if (cur){
-      cur.nodes.push(el.outerHTML);
+    } else if (/^#\s+/.test(line)){
+      // заголовок файла не выводим
     } else {
-      lead.push(el.textContent.trim());
+      (cur ? cur.lines : lead).push(line);
     }
   });
+  const leadText = lead.join(' ')
+    .replace(/!\[[^\]]*\]\([^)]*\)/g, '')
+    .replace(/\[([^\]]+)\]\([^)]*\)/g, '$1')
+    .replace(/[*_`]/g, '')
+    .replace(/\s+/g, ' ').trim();
   return {
-    lead: lead.filter(Boolean).join(' '),
-    sections: secs.map(x => ({ h: x.h, html: x.nodes.join('') }))
+    lead: leadText,
+    sections: secs.map(x => ({ h: x.h, html: mdToHtml(x.lines) }))
   };
 }
 
@@ -99,10 +140,9 @@ async function readDoc(name){
   try {
     const res = await fetch(name, { cache: 'no-store' });
     if (!res.ok) throw new Error(name + ': ' + res.status);
-    const { value } = await mammoth.convertToHtml({ arrayBuffer: await res.arrayBuffer() });
-    return splitDoc(value);
+    return splitMd(await res.text());
   } catch (e){
-    console.warn('Не прочитан docx:', e);
+    console.warn('Не прочитан файл текста:', name, e);
     return null;
   }
 }
@@ -152,6 +192,7 @@ async function loadContent(){
       studio: txt(p + 'studio'),
       date:   txt(p + 'date'),
       hero:   raw(p + 'hero'),
+      logo:   raw(p + 'logo'),
       meta:   txt(p + 'meta'),
       title:  txt(p + 'title'),
       stats:  stats(p),
@@ -262,7 +303,7 @@ const backdrop = document.getElementById('dk-backdrop');
 const modal    = document.getElementById('dk-modal');
 const inner    = document.getElementById('dk-in');
 const scroller = document.getElementById('dk-scroll');
-scroller.addEventListener('scroll', () => modal.classList.toggle('is-scrolled', scroller.scrollTop > 240), { passive: true });
+scroller.addEventListener('scroll', () => modal.style.setProperty('--p', Math.min(1, scroller.scrollTop / 200).toFixed(3)), { passive: true });
 document.getElementById('dk-close').addEventListener('click', () => closeAll());
 
 CASES.forEach((c, i) => {
@@ -480,8 +521,11 @@ function sectionHtml(b, empties){
   </div>`;
 }
 
-/* ---------- шапка кейса: фрейм, навигация, липкая строка ---------- */
+/* ---------- попап кейса: шапка, полоска при прокрутке, навигация ---------- */
 const VIDEO_RE = /\.(mp4|webm|ogg)(\?|#|$)/i;
+const ICON_L = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 3.5L5.5 8l4.5 4.5"/></svg>';
+const ICON_R = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3.5L10.5 8 6 12.5"/></svg>';
+const ICON_X = '<svg width="14" height="14" viewBox="0 0 15 15" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M1 1l13 13M14 1L1 14"/></svg>';
 
 function embedUrl(u){
   const yt = u.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([\w-]{6,})/);
@@ -492,14 +536,11 @@ function embedUrl(u){
 }
 
 function mediaHtml(src){
-  if (!src)
-    return `<div class="dk-hero-media is-empty">${SHOT_ICON}<span>${t(UI.shot)} · 16:9</span></div>`;
+  if (!src) return `<div class="dk-media is-empty">${SHOT_ICON}<span>${t(UI.shot)} · 4:3</span></div>`;
   const emb = embedUrl(src);
-  if (emb)
-    return `<div class="dk-hero-media"><iframe src="${emb}" title="Видео" allow="encrypted-media; picture-in-picture" allowfullscreen></iframe></div>`;
-  if (VIDEO_RE.test(src))
-    return `<div class="dk-hero-media"><video src="${src}" controls playsinline preload="metadata"></video></div>`;
-  return `<div class="dk-hero-media"><img src="${src}" alt=""></div>`;
+  if (emb) return `<div class="dk-media"><iframe src="${emb}" title="Видео" allow="encrypted-media; picture-in-picture" allowfullscreen></iframe></div>`;
+  if (VIDEO_RE.test(src)) return `<div class="dk-media"><video src="${src}" controls playsinline preload="metadata"></video></div>`;
+  return `<div class="dk-media"><img src="${src}" alt=""></div>`;
 }
 
 function navNeighbors(d){
@@ -507,51 +548,63 @@ function navNeighbors(d){
   return { prev: CASES[(i - 1 + n) % n], next: CASES[(i + 1) % n] };
 }
 
-function navHtml(d){
+/* кнопки листания: [левая, правая]; labels — показывать название соседнего кейса */
+function navParts(d, labels){
   const { prev, next } = navNeighbors(d);
-  return `<button class="dk-navb" type="button" data-go="-1">← ${t(prev.studio)}</button>`
-       + `<button class="dk-navb" type="button" data-go="1">${t(next.studio)} →</button>`;
+  const name = c => escHtml(t(c.studio));
+  const L = `<button class="dk-navb" type="button" data-go="-1" aria-label="Предыдущий кейс: ${name(prev)}">${ICON_L}${labels ? `<span>${name(prev)}</span>` : ''}</button>`;
+  const R = `<button class="dk-navb" type="button" data-go="1" aria-label="Следующий кейс: ${name(next)}">${labels ? `<span>${name(next)}</span>` : ''}${ICON_R}</button>`;
+  return [L, R];
 }
 
-function heroHtml(d){
-  const stats = (d.stats || []).map(x =>
-    `<div class="dk-hstat"><b>${t(x[0])}</b><span>${t(x[1])}</span></div>`).join('');
+function headHtml(d){
+  const [L, R] = navParts(d, false);
+  const logo = d.logo ? `<img class="dk-logo" src="${d.logo}" alt="">` : '';
+  const metrics = (d.stats || []).map(x =>
+    `<div class="dk-metric"><b>${t(x[0])}</b><span>${t(x[1])}</span></div>`).join('');
   return `
-    <div class="dk-hero">
-      ${mediaHtml(d.hero)}
-      <div class="dk-hero-shade" aria-hidden="true"></div>
-      <div class="dk-hero-top"><div class="dk-hero-nav">${navHtml(d)}</div></div>
-      <div class="dk-hero-head">
-        <div class="dk-hero-co">${t(d.studio)}${d.date ? ` <span>· ${t(d.date)}</span>` : ''}</div>
-        <h2 class="dk-hero-title" id="dk-title">${t(d.title)}</h2>
-      </div>
-      ${stats ? `<div class="dk-hero-stats">${stats}</div>` : ''}
+    ${mediaHtml(d.hero)}
+    <div class="dk-shade" aria-hidden="true"></div>
+    <div class="dk-top">
+      <div class="dk-brand">${logo}<span class="dk-co">${t(d.studio)}</span>${d.date ? `<span class="dk-yr">${t(d.date)}</span>` : ''}</div>
+      <div class="dk-nav">${L}${R}</div>
+    </div>
+    <div class="dk-info">
+      <h2 class="dk-title" id="dk-title">${t(d.title)}</h2>
+      ${d.meta ? `<div class="dk-tags">${t(d.meta)}</div>` : ''}
+      ${metrics ? `<div class="dk-metrics">${metrics}</div>` : ''}
     </div>`;
 }
 
-function barHtml(d){
-  return `<div class="dk-bar-co">${t(d.studio)}${d.date ? ` <span>· ${t(d.date)}</span>` : ''}</div>`
-       + `<div class="dk-bar-nav">${navHtml(d)}</div>`;
+function cardOf(sec){
+  const body = sec.text
+    ? `<div class="dk-body">${sec.html ? t(sec.text) : '<p>' + escHtml(t(sec.text)) + '</p>'}</div>`
+    : '';
+  return `<section class="dk-card">
+    ${sec.h ? `<h3 class="dk-card-h">${t(sec.h)}</h3>` : ''}
+    ${body}
+    ${sec.shot ? `<img class="dk-card-img" src="${sec.shot}" alt="">` : ''}
+  </section>`;
 }
 
 function render(d, empties){
-  const bar = document.getElementById('dk-bar');
+  const head = document.getElementById('dk-head');
+  const mnav = document.getElementById('dk-mnav');
   const isCase = d.id !== 'cv';
   modal.classList.toggle('is-case', isCase);
+  modal.style.setProperty('--p', '0');
 
   if (isCase){
-    bar.innerHTML = barHtml(d);
-    const secs = (d.sections || []).map(b => sectionHtml(b, empties)).join('');
-    inner.innerHTML = `
-      ${heroHtml(d)}
-      ${d.meta ? `<div class="dk-meta">${t(d.meta)}</div>` : ''}
-      ${d.lead ? `<p class="dk-lead">${t(d.lead)}</p>` : ''}
-      ${secs}
-      <div class="dk-foot">
-        ${d.link ? `<a class="dk-link" href="${d.link}" target="_blank" rel="noopener">${t(UI.open)}</a>` : '<span></span>'}
-      </div>`;
+    head.innerHTML = headHtml(d);
+    const lead = d.lead ? `<section class="dk-card"><p class="dk-lead">${escHtml(t(d.lead))}</p></section>` : '';
+    const secs = (d.sections || []).map(cardOf).join('');
+    const link = d.link ? `<a class="dk-link" href="${d.link}" target="_blank" rel="noopener">${t(UI.open)} →</a>` : '';
+    inner.innerHTML = `<div class="dk-cards">${lead}${secs}${link}</div>`;
+    const [L, R] = navParts(d, true);
+    mnav.innerHTML = L + `<button class="dk-mx" type="button" data-close aria-label="${escHtml(t(UI.close))}">${ICON_X}</button>` + R;
   } else {
-    bar.innerHTML = '';
+    head.innerHTML = '';
+    mnav.innerHTML = '';
     const secs = (d.sections || []).map(b => sectionHtml(b, empties)).join('');
     inner.innerHTML = `
       ${d.studio ? `<div class="dk-studio">${t(d.studio)}</div>` : ''}
@@ -565,11 +618,16 @@ function render(d, empties){
         ${d.link ? `<a class="dk-link" href="${d.link}" target="_blank" rel="noopener">${t(UI.open)}</a>` : '<span></span>'}
       </div>`;
   }
-  modal.querySelectorAll('[data-go]').forEach(b =>
-    b.addEventListener('click', () => goCase(+b.dataset.go)));
-  inner.querySelectorAll('.dk-shot.is-zoom img').forEach(img =>
+  inner.querySelectorAll('.dk-shot.is-zoom img, .dk-card-img').forEach(img =>
     img.addEventListener('click', () => zoomOpen(img.src)));
 }
+
+/* кнопки листания и закрытия из шапки и нижней панели */
+modal.addEventListener('click', e => {
+  const go = e.target.closest('[data-go]');
+  if (go){ goCase(+go.dataset.go); return; }
+  if (e.target.closest('[data-close]')) closeAll();
+});
 
 /* ---------- карта → оборот → модалка ---------- */
 /* Положение слота без учёта его трансформаций — от него считается полёт.

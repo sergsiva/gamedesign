@@ -683,3 +683,138 @@ html.dk-lock,body.dk-lock{overflow:hidden}
 .dk-body strong{color:var(--text)}
 .dk-body a{color:var(--glow)}
 .dk-body img{display:block;max-width:100%;height:auto;border-radius:12px;margin:14px 0}
+
+/* =========================================================================
+   ПОПАП КЕЙСА ПО МАКЕТУ (Figma 1150:249)
+   Шапка — отдельный слой поверх прокрутки. --p (0…1) сжимает её в полоску.
+   ========================================================================= */
+.dk-modal.is-case{
+  width:min(698px, calc(100vw - 32px));
+  height:min(88vh, 1000px);
+  max-height:none;
+  overflow:visible;
+  background:transparent;
+  box-shadow:none;
+  border-radius:0;
+  --full:calc(min(698px, 100vw - 32px) * .75);
+  --strip:68px;
+}
+.dk-modal.is-case .dk-scroll{position:absolute;inset:0;z-index:1;max-height:none;height:100%}
+.dk-modal.is-case .dk-in{padding:0}
+.dk-modal:not(.is-case) .dk-head{display:none}
+.dk-modal.is-case .dk-close{top:-56px;right:0}
+
+/* шапка: высота и видимость деталей меняются от --p */
+.dk-head{
+  position:absolute;top:0;left:0;right:0;z-index:3;
+  height:calc(var(--full) + (var(--strip) - var(--full)) * var(--p));
+  border-radius:20px;overflow:hidden;
+  background:#190b2e;
+}
+.dk-head .dk-media{position:absolute;inset:0;opacity:calc(1 - var(--p))}
+.dk-media{position:absolute;inset:0;overflow:hidden}
+.dk-media img,.dk-media video,.dk-media iframe{width:100%;height:100%;object-fit:cover;display:block;border:0}
+.dk-media.is-empty{
+  display:grid;place-items:center;align-content:center;gap:9px;color:#6B6B76;
+  background:linear-gradient(180deg,#2a1342,#190b2e);
+}
+.dk-media.is-empty span{font-size:12px}
+.dk-shade{
+  position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(180deg,
+    rgba(0,0,0,.42) 0%, rgba(0,0,0,0) 24%,
+    rgba(25,11,46,0) 40%, #190b2e 100%);
+  opacity:calc(1 - var(--p) * .6);
+}
+.dk-top{
+  position:absolute;top:12px;left:16px;right:16px;height:44px;
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+}
+.dk-brand{display:flex;align-items:center;gap:10px;min-width:0;font-family:"Inter",sans-serif}
+.dk-logo{width:20px;height:20px;border-radius:5px;object-fit:cover;flex-shrink:0}
+.dk-co{color:#d9d9d9;font-size:16px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dk-yr{color:#d9d9d9;opacity:.5;font-size:16px;white-space:nowrap}
+.dk-nav{display:flex;gap:8px;flex-shrink:0}
+.dk-modal .dk-navb{
+  width:44px;height:44px;padding:0;border-radius:40px;
+  display:grid;place-items:center;
+  background:rgba(0,0,0,.3);color:#d9d9d9;opacity:.8;
+}
+.dk-modal .dk-navb:hover{background:rgba(0,0,0,.5);opacity:1}
+
+.dk-info{
+  position:absolute;left:20px;right:20px;bottom:16px;
+  display:flex;flex-direction:column;gap:12px;
+  opacity:max(0, calc(1 - var(--p) * 2.6));
+  pointer-events:auto;
+}
+.dk-title{
+  margin:0;font-family:"Inter",sans-serif;font-weight:500;font-size:20px;line-height:24px;
+  color:#d9d9d9;text-wrap:balance;max-width:34ch;
+}
+.dk-tags{font-family:"Inter",sans-serif;font-size:12px;line-height:16px;color:#d9d9d9;opacity:.3}
+.dk-metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.dk-metric{background:#000;border-radius:9px;padding:8px 20px 14px;min-width:0}
+.dk-metric b{display:block;font-family:"Inter",sans-serif;font-weight:500;font-size:20px;line-height:35px;color:#d9d9d9}
+.dk-metric span{display:block;font-family:"Inter",sans-serif;font-size:12px;line-height:16px;color:#d9d9d9;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* карточки под шапкой: первый отступ равен высоте развёрнутой шапки */
+.dk-cards{
+  display:flex;flex-direction:column;gap:12px;
+  padding:calc(var(--full) + 12px) 0 40px;
+}
+.dk-card{background:#111116;border-radius:20px;padding:32px;font-family:"Inter",sans-serif}
+.dk-card-h{margin:0 0 12px;font-weight:700;font-size:16px;line-height:28px;color:#8e765c}
+.dk-card .dk-body p,.dk-card .dk-body li,.dk-card .dk-lead{
+  font-family:"Inter",sans-serif;font-size:16px;line-height:24px;color:#7d7d80;margin:0 0 .9em;
+}
+.dk-card .dk-body ul,.dk-card .dk-body ol{margin:0 0 .9em;padding-left:1.2em}
+.dk-card .dk-lead{margin:0}
+.dk-card-img{display:block;width:100%;height:auto;border-radius:12px;margin-top:16px;cursor:zoom-in}
+.dk-link{display:inline-block;margin:0 32px;color:#8e765c;font-size:14px}
+
+/* нижняя панель листания: только на телефоне */
+.dk-mnav{display:none}
+
+@media (max-width:820px){
+  .dk-modal.is-case{
+    width:calc(100vw - 24px);
+    height:calc(100dvh - 24px);
+    --full:calc((100vw - 24px) * 1.12);
+  }
+  .dk-modal.is-case .dk-close{display:none}
+  .dk-nav{display:none}
+  .dk-title{font-size:18px;line-height:22px}
+  .dk-metrics{grid-template-columns:repeat(2,1fr)}
+  .dk-metric b{font-size:18px;line-height:28px}
+  .dk-info{left:16px;right:16px;bottom:14px}
+  .dk-top{left:14px;right:14px}
+  .dk-cards{padding-bottom:120px}
+  .dk-card{padding:24px}
+  .dk-mnav{
+    display:flex;position:absolute;left:12px;right:12px;bottom:12px;z-index:4;
+    align-items:center;justify-content:space-between;gap:8px;
+    padding:8px;border-radius:999px;
+    background:rgba(25,11,46,.94);
+    backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+    padding-bottom:calc(8px + env(safe-area-inset-bottom,0px));
+  }
+  .dk-mnav .dk-navb{
+    flex:1 1 0;min-width:0;width:auto;height:48px;border-radius:999px;
+    display:flex;align-items:center;justify-content:center;gap:8px;padding:0 14px;
+    background:rgba(255,255,255,.07);opacity:1;
+  }
+  .dk-mnav .dk-navb span{
+    min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+    font-family:"Inter",sans-serif;font-size:13px;color:#d9d9d9;
+  }
+  .dk-mx{
+    flex:0 0 48px;width:48px;height:48px;border-radius:50%;
+    display:grid;place-items:center;background:rgba(255,255,255,.14);color:#fff;
+  }
+}
+/* пустой фрейм без картинки не мешает тексту; подписи метрик переносятся на телефоне */
+.dk-media.is-empty > *{display:none}
+@media (max-width:820px){
+  .dk-metric span{white-space:normal;line-height:14px}
+}

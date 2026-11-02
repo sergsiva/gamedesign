@@ -303,7 +303,61 @@ const backdrop = document.getElementById('dk-backdrop');
 const modal    = document.getElementById('dk-modal');
 const inner    = document.getElementById('dk-in');
 const scroller = document.getElementById('dk-scroll');
-scroller.addEventListener('scroll', () => modal.style.setProperty('--p', Math.min(1, scroller.scrollTop / 200).toFixed(3)), { passive: true });
+/* ---------- прокрутка попапа кейса: весь попап едет по странице, шапка прилипает ---------- */
+const CASE_TOP = 48;          // отступ сверху попапа (совпадает с padding в CSS)
+const CASE_STRIP = 68;        // высота полоски в свёрнутом виде (совпадает с --strip)
+let caseFull = 500;           // полная высота шапки в пикселях, измеряем из CSS
+
+function curScroll(){ return modal.classList.contains('is-case') ? modal.scrollTop : scroller.scrollTop; }
+
+function measureFull(){
+  const probe = document.createElement('div');
+  probe.style.cssText = 'position:absolute;visibility:hidden;height:var(--full)';
+  modal.appendChild(probe);
+  caseFull = probe.offsetHeight || caseFull;
+  probe.remove();
+}
+
+function onScroll(){
+  if (!modal.classList.contains('is-case')) return;
+  const s = Math.max(0, modal.scrollTop - CASE_TOP);
+  const p = Math.min(1, s / Math.max(1, caseFull - CASE_STRIP));
+  modal.style.setProperty('--s', s + 'px');
+  modal.style.setProperty('--p', p.toFixed(3));
+}
+modal.addEventListener('scroll', onScroll, { passive: true });
+window.addEventListener('resize', () => { measureFull(); onScroll(); });
+
+/* плавная прокрутка колёсиком: цель догоняется мягко, как на Mac */
+const smooth = { target: 0, cur: 0, raf: 0 };
+function smoothTick(){
+  smooth.cur += (smooth.target - smooth.cur) * 0.14;
+  if (Math.abs(smooth.target - smooth.cur) < 0.5) smooth.cur = smooth.target;
+  modal.scrollTop = smooth.cur;
+  smooth.raf = smooth.cur === smooth.target ? 0 : requestAnimationFrame(smoothTick);
+}
+modal.addEventListener('wheel', e => {
+  if (!modal.classList.contains('is-case')) return;
+  e.preventDefault();
+  const max = modal.scrollHeight - modal.clientHeight;
+  const dy = e.deltaMode === 1 ? e.deltaY * 16 : e.deltaY;
+  if (!smooth.raf){ smooth.cur = modal.scrollTop; smooth.target = modal.scrollTop; }
+  smooth.target = Math.max(0, Math.min(max, smooth.target + dy));
+  if (!smooth.raf) smooth.raf = requestAnimationFrame(smoothTick);
+}, { passive: false });
+
+function resetScroll(){
+  if (smooth.raf){ cancelAnimationFrame(smooth.raf); smooth.raf = 0; }
+  smooth.cur = smooth.target = 0;
+  modal.scrollTop = 0;
+  scroller.scrollTop = 0;
+  onScroll();
+}
+
+/* клик по пустому месту вокруг попапа закрывает его */
+modal.addEventListener('click', e => {
+  if (e.target === modal && modal.classList.contains('is-case')) closeAll();
+});
 document.getElementById('dk-close').addEventListener('click', () => closeAll());
 
 CASES.forEach((c, i) => {
@@ -567,7 +621,7 @@ function headHtml(d){
     <div class="dk-shade" aria-hidden="true"></div>
     <div class="dk-top">
       <div class="dk-brand">${logo}<span class="dk-co">${t(d.studio)}</span>${d.date ? `<span class="dk-yr">${t(d.date)}</span>` : ''}</div>
-      <div class="dk-nav">${L}${R}</div>
+      <div class="dk-nav">${L}${R}<button class="dk-x" type="button" data-close aria-label="Закрыть">${ICON_X}</button></div>
     </div>
     <div class="dk-info">
       <h2 class="dk-title" id="dk-title">${t(d.title)}</h2>
@@ -620,6 +674,8 @@ function render(d, empties){
   }
   inner.querySelectorAll('.dk-shot.is-zoom img, .dk-card-img').forEach(img =>
     img.addEventListener('click', () => zoomOpen(img.src)));
+  measureFull();
+  onScroll();
 }
 
 /* кнопки листания и закрытия из шапки и нижней панели */
@@ -737,7 +793,7 @@ function openCase(i){
     { duration:total, fill:'forwards' });
 
   setHash(CASES[i].id);
-  setTimeout(() => { modal.classList.add('is-on'); scroller.scrollTop = 0; modal.focus(); }, modalDelay);
+  setTimeout(() => { modal.classList.add('is-on'); resetScroll(); modal.focus(); }, modalDelay);
   setTimeout(() => { flyer.remove(); busy = false; }, Math.max(total, modalDelay) + 40);
 }
 
@@ -748,7 +804,7 @@ function openCV(){
   lock(true);
   backdrop.classList.add('is-on');
   modal.classList.add('is-on');
-  scroller.scrollTop = 0;
+  resetScroll();
   modal.focus();
 }
 
@@ -1020,7 +1076,7 @@ function goCase(dir){
   inner.style.opacity = '0';
   setTimeout(() => {
     render(CASES[next], true);
-    scroller.scrollTop = 0;
+    resetScroll();
     inner.style.opacity = '';
     setHash(CASES[next].id);
   }, 180);
@@ -1060,7 +1116,7 @@ addEventListener('keydown', e => {
 (function(){
   let y0 = null;
   modal.addEventListener('touchstart', e => {
-    y0 = scroller.scrollTop <= 0 ? e.touches[0].clientY : null;
+    y0 = curScroll() <= 0 ? e.touches[0].clientY : null;
   }, { passive:true });
   modal.addEventListener('touchmove', e => {
     if (y0 === null) return;

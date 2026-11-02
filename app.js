@@ -320,7 +320,7 @@ function measureFull(){
 
 function onScroll(){
   if (!modal.classList.contains('is-case')) return;
-  const s = Math.max(0, modal.scrollTop - CASE_TOP);
+  const s = Math.max(0, modal.scrollTop);
   const p = Math.min(1, s / Math.max(1, caseFull - CASE_STRIP));
   modal.style.setProperty('--s', s + 'px');
   modal.style.setProperty('--p', p.toFixed(3));

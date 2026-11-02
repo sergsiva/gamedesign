@@ -882,3 +882,7 @@ html.dk-lock,body.dk-lock{overflow:hidden}
 @media (max-width:820px){
   .dk-modal.is-case .dk-card{padding:20px 22px}
 }
+
+/* v4: шапка прилипает на том же отступе, что и в начале; внизу место под прокрутку до середины экрана */
+.dk-modal.is-case .dk-head{top:48px}
+.dk-modal.is-case .dk-cards{padding-bottom:50vh}

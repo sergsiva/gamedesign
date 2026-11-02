@@ -11,7 +11,7 @@ ui.zoom,"Закрыть изображение","Close image"
 site.name,"Serg Ivanov",
 site.tg,"https://t.me/sergdsgn",
 site.back,,
-case.muses.cover,"https://static.tildacdn.com/tild3231-3162-4134-b464-393336343638/CoverMuses.png",
+case.muses.cover,"files/cover/musesgames-cover.jpg",
 case.muses.back,,
 case.muses.studio,"Muses Games",
 case.muses.meta,"AI · TelegramApp · NFT",

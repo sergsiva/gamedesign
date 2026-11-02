@@ -886,3 +886,15 @@ html.dk-lock,body.dk-lock{overflow:hidden}
 /* v4: шапка прилипает на том же отступе, что и в начале; внизу место под прокрутку до середины экрана */
 .dk-modal.is-case .dk-head{top:48px}
 .dk-modal.is-case .dk-cards{padding-bottom:50vh}
+
+/* v5: шапка прилипает относительно всего попапа, поэтому не уезжает вверх в конце.
+   Отрицательный margin-bottom убирает её высоту из потока, спейсер сохраняет место. */
+.dk-modal.is-case .dk-popup{position:relative;width:var(--w);margin:0 auto}
+.dk-modal:not(.is-case) .dk-popup{display:contents}
+.dk-modal.is-case .dk-headbox{position:static;width:auto;height:var(--full);margin:0}
+.dk-modal.is-case .dk-head{
+  position:sticky;top:48px;z-index:3;
+  height:max(var(--strip), calc(var(--full) - var(--s, 0px)));
+  margin-bottom:calc(-1 * max(var(--strip), calc(var(--full) - var(--s, 0px))));
+}
+.dk-modal.is-case .dk-head{top:0}

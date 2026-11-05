@@ -5,11 +5,11 @@ ui.open,"Открыть проект →","Open project →"
 ui.close,"Закрыть","Close"
 ui.card,"Открыть кейс","Open case"
 ui.cv,"Открыть CV","Open CV"
-ui.prev,"← Предыдущий","← Previous"
-ui.next,"Следующий →","Next →"
+ui.prev,"← Prev","← Prev"
+ui.next,"Next →","Next →"
 ui.zoom,"Закрыть изображение","Close image"
-site.name,"Serg Ivanov",
-site.tg,"https://t.me/sergdsgn",
+site.name,"Serg Ivanov",Serg Ivanov
+site.tg,"https://t.me/sergdsgn",https://t.me/sergdsgn
 site.back,,
 case.muses.cover,"files/cover/musesgames-cover.jpg",
 case.muses.back,,

@@ -75,15 +75,21 @@ function parseCSV(text){
 /* разбор Markdown: "## " = начало секции, всё до первого "## " = вступление, "# " — заголовок файла */
 function escHtml(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
-function inlineMd(s){
+function absSrc(src, base){
+  if (!base || /^(https?:|data:|\/)/.test(src)) return src;
+  return new URL(src, base).href;
+}
+
+function inlineMdRaw(s, base){
   return escHtml(s)
-    .replace(/!\[([^\]]*)\]\(([^)\s]+)\)/g, '<img src="$2" alt="$1">')
+    .replace(/!\[([^\]]*)\]\(([^)\s]+)\)/g, (m, alt, src) => '<img src="' + absSrc(src, base) + '" alt="' + alt + '">')
     .replace(/\[([^\]]+)\]\(([^)\s]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>')
     .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
     .replace(/(^|[^*])\*([^*\s][^*]*)\*/g, '$1<em>$2</em>');
 }
 
-function mdToHtml(lines){
+function mdToHtml(lines, base){
+  const inlineMd = s => inlineMdRaw(s, base);
   const out = [];
   let para = [], list = null;
   const flushPara = () => { if (para.length){ out.push('<p>' + inlineMd(para.join(' ')) + '</p>'); para = []; } };
@@ -111,7 +117,7 @@ function mdToHtml(lines){
   return out.join('');
 }
 
-function splitMd(text){
+function splitMd(text, base){
   const lead = [], secs = [];
   let cur = null;
   text.replace(/\r/g, '').split('\n').forEach(line => {
@@ -131,7 +137,7 @@ function splitMd(text){
     .replace(/\s+/g, ' ').trim();
   return {
     lead: leadText,
-    sections: secs.map(x => ({ h: x.h, html: mdToHtml(x.lines) }))
+    sections: secs.map(x => ({ h: x.h, html: mdToHtml(x.lines, base) }))
   };
 }
 
@@ -140,7 +146,7 @@ async function readDoc(name){
   try {
     const res = await fetch(name, { cache: 'no-store' });
     if (!res.ok) throw new Error(name + ': ' + res.status);
-    return splitMd(await res.text());
+    return splitMd(await res.text(), new URL(name, location.href).href);
   } catch (e){
     console.warn('Не прочитан файл текста:', name, e);
     return null;

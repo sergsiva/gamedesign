@@ -898,3 +898,17 @@ html.dk-lock,body.dk-lock{overflow:hidden}
   margin-bottom:calc(-1 * max(var(--strip), calc(var(--full) - var(--s, 0px))));
 }
 .dk-modal.is-case .dk-head{top:0}
+
+/* маска сверху: закрывает прокрученный контент в полосе над шапкой.
+   Липкая и не занимает места в потоке, колёсико проходит сквозь неё. */
+.dk-modal.is-case::before{
+  content:"";display:block;position:sticky;top:0;z-index:4;
+  height:48px;margin-bottom:-48px;pointer-events:none;
+  background:linear-gradient(180deg,
+    rgba(6,6,9,1) 0%, rgba(6,6,9,1) 86%, rgba(6,6,9,0) 100%);
+}
+
+/* подпись к картинке из .md: мелкий курсив под скрином */
+.dk-body figure.dk-fig{margin:18px 0}
+.dk-body figure.dk-fig img{margin:0}
+.dk-body figcaption{font-size:12px;line-height:16px;font-style:italic;color:#7d7d80;margin-top:8px}

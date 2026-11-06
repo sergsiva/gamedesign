@@ -13,7 +13,7 @@ site.tg,"https://t.me/sergdsgn",
 site.back,,
 site.title,"Сергей Иванов · Game Designer","Sergey Ivanov · Game Designer"
 site.description,"Игровой дизайнер: кейсы, игровые экономики, AI-продукты, дизайн-системы.","Game designer: case studies on game economies, AI products and design systems."
-case.muses.cover,,
+case.muses.cover,files/cover/musesgames-cover.jpg,
 case.muses.back,,
 case.muses.studio,"Muses Games",
 case.muses.meta,"AI · TelegramApp · NFT",

@@ -201,6 +201,7 @@ async function loadContent(){
       date:   txt(p + 'date'),
       hero:   raw(p + 'hero'),
       logo:   raw(p + 'logo'),
+      color:  raw(p + 'color'),
       meta:   txt(p + 'meta'),
       title:  txt(p + 'title'),
       stats:  stats(p),
@@ -239,7 +240,8 @@ async function loadContent(){
   const UI = {};
   ['role','shot','open','close','card','cv','prev','next','zoom'].forEach(k => { UI[k] = txt('ui.' + k); });
 
-  const SITE = { name: txt('site.name'), tg: raw('site.tg'), back: raw('site.back') };
+  const SITE = { name: txt('site.name'), tg: raw('site.tg'), back: raw('site.back'),
+                 title: txt('site.title'), description: txt('site.description') };
 
   return { UI, SITE, CASES, CV };
 }
@@ -605,6 +607,34 @@ function mediaHtml(src){
   return `<div class="dk-media"><img src="${src}" alt=""></div>`;
 }
 
+const edgeCache = new Map();
+function edgeColor(src){
+  if (edgeCache.has(src)) return edgeCache.get(src);
+  const p = new Promise(res => {
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = () => {
+      try {
+        const w = 64, h = Math.max(1, Math.round(64 * img.naturalHeight / img.naturalWidth));
+        const cv = document.createElement('canvas');
+        cv.width = w; cv.height = h;
+        const cx = cv.getContext('2d');
+        cx.drawImage(img, 0, 0, w, h);
+        const d = cx.getImageData(0, 0, w, h).data;
+        let r = 0, g = 0, b = 0, n = 0;
+        const add = i => { r += d[i]; g += d[i + 1]; b += d[i + 2]; n++; };
+        for (let x = 0; x < w; x++){ add(x * 4); add(((h - 1) * w + x) * 4); }
+        for (let y = 0; y < h; y++){ add(y * w * 4); add((y * w + w - 1) * 4); }
+        res('rgb(' + Math.round(r / n) + ',' + Math.round(g / n) + ',' + Math.round(b / n) + ')');
+      } catch (e){ res(null); }
+    };
+    img.onerror = () => res(null);
+    img.src = src;
+  });
+  edgeCache.set(src, p);
+  return p;
+}
+
 function navNeighbors(d){
   const i = CASES.indexOf(d), n = CASES.length;
   return { prev: CASES[(i - 1 + n) % n], next: CASES[(i + 1) % n] };
@@ -658,10 +688,17 @@ function render(d, empties){
 
   if (isCase){
     head.innerHTML = headHtml(d);
+    head.dataset.id = d.id;
+    head.style.setProperty('--cbg', d.color || '#190b2e');
+    if (!d.color && d.hero && !VIDEO_RE.test(d.hero) && !embedUrl(d.hero)){
+      edgeColor(d.hero).then(c => { if (c && head.dataset.id === d.id) head.style.setProperty('--cbg', c); });
+    }
     const lead = d.lead ? `<section class="dk-card"><p class="dk-lead">${escHtml(t(d.lead))}</p></section>` : '';
     const secs = (d.sections || []).map(cardOf).join('');
     const link = d.link ? `<a class="dk-link" href="${d.link}" target="_blank" rel="noopener">${t(UI.open)} →</a>` : '';
-    inner.innerHTML = `<div class="dk-cards">${lead}${secs}${link}</div>`;
+    const metricsRow = (d.stats || []).map(x =>
+      `<div class="dk-metric"><b>${t(x[0])}</b><span>${t(x[1])}</span></div>`).join('');
+    inner.innerHTML = `<div class="dk-mrow">${metricsRow}</div><div class="dk-cards">${lead}${secs}${link}</div>`;
     const [L, R] = navParts(d, true);
     mnav.innerHTML = L + `<button class="dk-mx" type="button" data-close aria-label="${escHtml(t(UI.close))}">${ICON_X}</button>` + R;
   } else {
@@ -1150,6 +1187,11 @@ addEventListener('keydown', e => {
     slots.forEach((s, i) => s.querySelector('.dk-hit')
       .setAttribute('aria-label', t(UI.card) + ': ' + t(CASES[i].studio)));
     if (open$ >= 0) render(open$ === 99 ? CV : CASES[open$], open$ !== 99);
+    const setMeta = (sel, v) => { const m = document.querySelector(sel); if (m && v) m.setAttribute('content', v); };
+    if (t(SITE.title)) document.title = t(SITE.title);
+    setMeta('meta[name="description"]', t(SITE.description));
+    setMeta('meta[property="og:title"]', t(SITE.title));
+    setMeta('meta[property="og:description"]', t(SITE.description));
   }
   function set(l){
     LANG = l;

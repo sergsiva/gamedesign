@@ -5,21 +5,24 @@ ui.open,"Открыть проект →","Open project →"
 ui.close,"Закрыть","Close"
 ui.card,"Открыть кейс","Open case"
 ui.cv,"Открыть CV","Open CV"
-ui.prev,"← Prev","← Prev"
-ui.next,"Next →","Next →"
+ui.prev,"← Предыдущий","← Previous"
+ui.next,"Следующий →","Next →"
 ui.zoom,"Закрыть изображение","Close image"
-site.name,"Serg Ivanov",Serg Ivanov
-site.tg,"https://t.me/sergdsgn",https://t.me/sergdsgn
+site.name,"Serg Ivanov",
+site.tg,"https://t.me/sergdsgn",
 site.back,,
-case.muses.cover,"files/cover/musesgames-cover.jpg",
+site.title,"Сергей Иванов · Game Designer","Sergey Ivanov · Game Designer"
+site.description,"Игровой дизайнер: кейсы, игровые экономики, AI-продукты, дизайн-системы.","Game designer: case studies on game economies, AI products and design systems."
+case.muses.cover,,
 case.muses.back,,
 case.muses.studio,"Muses Games",
-case.muses.meta,"TelegramApp · AI · Cryptocurrency · NFT",
-case.muses.title,"Тёплая визуальная новелла, где игроки получают уникальное общение с ИИ",
+case.muses.meta,"AI · TelegramApp · NFT",
+case.muses.title,"AI-компаньон и NFT-маркетплейс в Telegram",
 case.muses.date,"2025",
-case.muses.hero,"files/hero/musesgames-hero.jpg",
+case.muses.hero,,
 case.muses.logo,,
-case.muses.doc,"files/musesgames-case.md",
+case.muses.color,,
+case.muses.doc,"muses.md",
 case.muses.doc_en,,
 case.muses.stat1.value,"850K+",
 case.muses.stat1.label,"Установок",
@@ -29,13 +32,13 @@ case.muses.stat3.value,"62%",
 case.muses.stat3.label,"Вовлечённость в маркетплейс",
 case.muses.stat4.value,"26%",
 case.muses.stat4.label,"Конверсия в премиум",
-case.muses.lead,"Лид описание",
+case.muses.lead,"Социальная экосистема, где игрок строит связь с цифровой музой: персональные диалоги, прогрессия и экономика на NFT.",
 case.muses.s1.h,"Задача",
-case.muses.s1.text,"Описание задачи гп и кор механик",
+case.muses.s1.text,"Продукт должен был удерживать не гриндом, а привязанностью к персонажу. AI-диалоги, прогрессию и торговую площадку нужно было связать в один цикл, читаемый за первую минуту.",
 case.muses.s2.h,"Что я сделал",
-case.muses.s2.text,"Описание того что я сделал и какие гепотизы реализовал",
+case.muses.s2.text,"Вёл UX/UI от концепта до MVP: сценарии AI-взаимодействия, интерфейс маркетплейса и инвентаря, упрощение прогрессии до понятной игроку лестницы.",
 case.muses.s3.h,"Результат",
-case.muses.s3.text,"Какой результат получился в итоге и какие метрики получили если есть",
+case.muses.s3.text,"Retention на 30-й день вырос до 32%, вовлечённость в маркетплейс — до 62%. Модульная компонентная архитектура осталась команде разработки.",
 case.muses.link,,
 case.battleverse.cover,,
 case.battleverse.back,,
@@ -45,6 +48,7 @@ case.battleverse.title,"PvP-арена в Web3: от хакатона до пр�
 case.battleverse.date,"2022—2023",
 case.battleverse.hero,,
 case.battleverse.logo,,
+case.battleverse.color,,
 case.battleverse.doc,"battleverse.md",
 case.battleverse.doc_en,,
 case.battleverse.stat1.value,"3-е",
@@ -71,6 +75,7 @@ case.antifreeze.title,"UX игровых механик и сценарный д
 case.antifreeze.date,"2023",
 case.antifreeze.hero,,
 case.antifreeze.logo,,
+case.antifreeze.color,,
 case.antifreeze.doc,"antifreeze.md",
 case.antifreeze.doc_en,,
 case.antifreeze.stat1.value,"0→MVP",
@@ -93,6 +98,7 @@ case.justslide.title,"Маркетинговые CRM и дизайн-систе�
 case.justslide.date,"2020—2022",
 case.justslide.hero,,
 case.justslide.logo,,
+case.justslide.color,,
 case.justslide.doc,"justslide.md",
 case.justslide.doc_en,,
 case.justslide.stat1.value,"2",
@@ -117,6 +123,7 @@ case.fotostrana.title,"Продукты соцсети, браузерные и�
 case.fotostrana.date,"2015—2019",
 case.fotostrana.hero,,
 case.fotostrana.logo,,
+case.fotostrana.color,,
 case.fotostrana.doc,"fotostrana.md",
 case.fotostrana.doc_en,,
 case.fotostrana.stat1.value,"Games",

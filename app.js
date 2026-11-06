@@ -665,7 +665,8 @@ function headHtml(d){
       <h2 class="dk-title" id="dk-title">${t(d.title)}</h2>
       ${d.meta ? `<div class="dk-tags">${t(d.meta)}</div>` : ''}
       ${metrics ? `<div class="dk-metrics">${metrics}</div>` : ''}
-    </div>`;
+    </div>
+    ${metrics ? `<div class="dk-mhead">${metrics}</div>` : ''}`;
 }
 
 function cardOf(sec){
@@ -696,9 +697,7 @@ function render(d, empties){
     const lead = d.lead ? `<section class="dk-card"><p class="dk-lead">${escHtml(t(d.lead))}</p></section>` : '';
     const secs = (d.sections || []).map(cardOf).join('');
     const link = d.link ? `<a class="dk-link" href="${d.link}" target="_blank" rel="noopener">${t(UI.open)} →</a>` : '';
-    const metricsRow = (d.stats || []).map(x =>
-      `<div class="dk-metric"><b>${t(x[0])}</b><span>${t(x[1])}</span></div>`).join('');
-    inner.innerHTML = `<div class="dk-mrow">${metricsRow}</div><div class="dk-cards">${lead}${secs}${link}</div>`;
+    inner.innerHTML = `<div class="dk-cards">${lead}${secs}${link}</div>`;
     const [L, R] = navParts(d, true);
     mnav.innerHTML = L + `<button class="dk-mx" type="button" data-close aria-label="${escHtml(t(UI.close))}">${ICON_X}</button>` + R;
   } else {

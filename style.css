@@ -912,3 +912,6 @@ html.dk-lock,body.dk-lock{overflow:hidden}
 .dk-body figure.dk-fig{margin:18px 0}
 .dk-body figure.dk-fig img{margin:0}
 .dk-body figcaption{font-size:12px;line-height:16px;font-style:italic;color:#7d7d80;margin-top:8px}
+
+/* маска не должна перекрывать шапку: ставим её ниже по слоям */
+.dk-modal.is-case::before{z-index:2}

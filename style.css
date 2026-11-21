@@ -909,6 +909,21 @@ html.dk-lock,body.dk-lock{overflow:hidden}
 /* подпись к картинке из .md: мелкий курсив под скрином */
 .dk-body figure.dk-fig{margin:18px 0}
 .dk-body figure.dk-fig img{margin:0}
+/* несколько картинок в одну строку Markdown → ряд равных колонок */
+.dk-body .dk-fig-row,
+.dk-sec .dk-fig-row{
+  display:grid;
+  grid-template-columns:repeat(var(--cols, 2), 1fr);
+  gap:20px;                 /* отступ между картинками: 16–24px */
+  margin:18px 0;
+}
+.dk-fig-row .dk-fig{margin:0}
+.dk-fig-row .dk-fig img{margin:0}
+
+/* на телефоне две мелкие картинки в столбик */
+@media (max-width:820px){
+  .dk-fig-row{grid-template-columns:1fr;gap:14px}
+}
 .dk-body figcaption{font-size:12px;line-height:16px;font-style:italic;color:#7d7d80;margin-top:8px}
 
 /* маска не должна перекрывать шапку: ставим её ниже по слоям */

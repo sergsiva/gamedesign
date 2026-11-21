@@ -112,7 +112,18 @@ function mdToHtml(lines, base){
     flushList();
     const h3 = line.match(/^###\s+(.*)$/);
     if (h3){ flushPara(); out.push('<h4>' + inlineMd(h3[1]) + '</h4>'); return; }
-    if (/^!\[[^\]]*\]\([^)]+\)$/.test(line)){ flushPara(); out.push(inlineMd(line)); return; }
+    // строка целиком состоит из картинок (одна или несколько через пробел)
+    const imgs = line.match(/!\[[^\]]*\]\([^)\s]+\)/g);
+    if (imgs && line.replace(/!\[[^\]]*\]\([^)\s]+\)/g, '').trim() === ''){
+      flushPara();
+      if (imgs.length === 1){
+        out.push(inlineMd(imgs[0]));           // одна — как раньше
+      } else {
+        out.push('<div class="dk-fig-row" style="--cols:' + imgs.length + '">'
+          + imgs.map(x => inlineMd(x)).join('') + '</div>');
+      }
+      return;
+    }
     para.push(line);
   });
   flushPara(); flushList();

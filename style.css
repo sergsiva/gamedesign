@@ -917,7 +917,10 @@ html.dk-lock,body.dk-lock{overflow:hidden}
   gap:20px;                 /* отступ между картинками: 16–24px */
   margin:18px 0;
 }
-.dk-fig-row .dk-fig{margin:0}
+.dk-body .dk-fig-row .dk-fig,
+.dk-sec .dk-fig-row .dk-fig{
+  margin:0;
+}
 .dk-fig-row .dk-fig img{margin:0}
 
 /* на телефоне две мелкие картинки в столбик */

@@ -124,6 +124,9 @@ function mdToHtml(lines, base){
       }
       return;
     }
+    const sp = line.match(/^::space(?:\s+(\d+))?$/);
+    if (sp){ flushPara(); flushList(); out.push('<div class="dk-gap" style="height:' + (sp[1] || 40) + 'px"></div>'); return; }
+
     para.push(line);
   });
   flushPara(); flushList();

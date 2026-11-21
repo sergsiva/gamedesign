@@ -1,7 +1,7 @@
 
 **BattleVerse** — это Web3-игра в жанре PvP/PvE с уникальными NFT-персонажами, прокачкой, добычей ресурсов, крафтом, выполнения миссий и заданий, с внутриигровой экономикой на токенах QZQ и BVC, в межгалактическом масштабе.
 
-![Screen Battle](/files/bv-screens/bv-battle2.mp4)
+![Screen Battle](bv-screens/bv-battle2.mp4)
 
 ## Моя роль
 
@@ -19,7 +19,7 @@ Game Designer / Systems Designer. В зоне моей ответственно�
 - Основные удары, скиллы и расходники. 
 - Просчитал баланс.
 
-![Combat System](/files/bv-screens/bv-combatsystem.png)![Screen Battle](/files/bv-screens/bv-battle.png)
+![Combat System](bv-screens/bv-combatsystem.png)![Screen Battle](bv-screens/bv-battle.png)
 
 *1. Схема боевой системы. 2. Экран PvP битвы. Первая этирация БС имела только основные удары, позже расширили до скилов и раходников. На экране битвы снизу в центре  распологается основное управления персонажем. Сверху вниз кнопки выбора дейсвтий по фазам хода: **расходник → скилы → основной удар → ход***
 
@@ -28,7 +28,7 @@ Game Designer / Systems Designer. В зоне моей ответственно�
 - Система Rarity - редкость атрибутов персонажей и система Upgrade. 
 - Просчитал баланс получения и роста eXP, зависимостей прокачки и тайминги.
 
-![Combat System](/files/bv-screens/bv-combatsystem.png)![Screen Battle](/files/bv-screens/bv-battle.png)
+![Combat System](bv-screens/bv-combatsystem.png)![Screen Battle](bv-screens/bv-battle.png)
 
 *Схема боевой системы и экран PvP битвы. Первая этирация БС имела только основные удары, позже расширили до скилов и раходников. На экране битвы в центре снизу распологается основное управления. Сверху вниз кнопки выбора дейсвтий по фазам хода: *расходник → скилы → основной удар → ход*
 

@@ -923,6 +923,7 @@ html.dk-lock,body.dk-lock{overflow:hidden}
 }
 .dk-fig-row .dk-fig img{margin:0}
 .dk-fig-row > figure{margin:0 !important}
+.dk-fig img, .dk-media img{cursor:zoom-in}
 
 /* на телефоне две мелкие картинки в столбик */
 @media (max-width:820px){

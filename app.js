@@ -730,8 +730,8 @@ function render(d, empties){
         ${d.link ? `<a class="dk-link" href="${d.link}" target="_blank" rel="noopener">${t(UI.open)}</a>` : '<span></span>'}
       </div>`;
   }
-  inner.querySelectorAll('.dk-shot.is-zoom img, .dk-card-img').forEach(img =>
-    img.addEventListener('click', () => zoomOpen(img.src)));
+  inner.querySelectorAll('.dk-shot.is-zoom img, .dk-card-img, .dk-fig img, .dk-media img').forEach(img =>
+  img.addEventListener('click', () => zoomOpen(img.src)));
   measureFull();
   onScroll();
 }

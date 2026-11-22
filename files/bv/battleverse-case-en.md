@@ -1,101 +1,99 @@
 ## i
-**BattleVerse** — это масштабная Web3-вселенная в жанре PvP/PvE. Игрокам нужно сражаеться за территории в межгалактических турнирах, строить свою империю: фармить ресурсы, крафтить предметы и выводить уникальных NFT-персонажей с помощью механики скрещивания (Breeding). Вся экономика игры держится на токенах QZQ и BVC, а судьба проекта в руках DAO.
+**BattleVerse** is a large-scale Web3 universe in the PvP/PvE genre. Players must fight for territories in intergalactic tournaments, build their empire: farm resources, craft items, and breed unique NFT characters using the Breeding mechanic. The entire game economy relies on the QZQ and BVC tokens, and the fate of the project is in the hands of the DAO.
 ::space 8
-- **Межгалактические турниры:** Сражения за звание сильнейшего, участие в масштабных ивентах и частных лобби, чтобы получить доступ к элитному бридингу.
-- **Скрещивание (Breeding):** Скрещивание персонажей разных рас, чтобы вывести абсолютно новых, кастомных героев.
-- **Фарминг и Экономика:** Покупка территорий и строительство фабрик для производства уникальных ресурсов и чипов, билетов на турниры и добычи токенов $QZQ.
-- **Уникальные расы:** миролюбивые грибы Шрумы и боевых Бэби роботы, стремящиеся очеловечить себя.
+- **Intergalactic Tournaments:** Battles for the title of the strongest, participation in large-scale events and private lobbies to gain access to elite breeding.
+- **Breeding:** Crossing characters of different races to produce completely new, custom heroes.
+- **Farming and Economy:** Buying territories and building factories to produce unique resources and chips, tournament tickets, and mining $QZQ tokens.
+- **Unique Races:** peace-loving Shrooms and combat Baby Robots striving to humanize themselves.
 ![Screen Battle](bv-battle1.gif)
 
-## Моя роль
+## My Role
 
-Game Designer / Systems Designer. В зоне моей ответственности были: боевой кор-луп, баланс атрибутов и eXP, система крафта и расходников, а также проектирование долгосрочных мета-систем и пользовательского пути (онбординг).
+Game Designer / Systems Designer. My responsibilities included: combat core loop, attribute and eXP balance, crafting and consumables system, as well as designing long-term meta-systems and the user journey (onboarding).
 
-## Задача
+## Task
 
-Создать простую кор-механику PvP/PvE и боевую систему с прокачкой персонажей, на которой игроки могут зарабатывать на аренах и турнирах. Изначально задача была расширить NFT-части персонажей, чтобы через них создавалась уникальность и она записывалась в NFT. Дальше идея расширилась до экономики с добычей и торговлей ресурсами, миссиями и квестами, и режимом гонок. Отдельная задача - онбординг: игрок без знания крипты должен быстро разобраться в механиках и захотеть купить других NFT-персонажей
+Create a simple PvP/PvE core mechanic and a combat system with character progression, where players can earn on arenas and tournaments. Initially, the task was to expand the NFT parts of characters so that uniqueness could be created through them and recorded in the NFT. Later, the idea expanded to an economy with resource extraction and trading, missions and quests, and a racing mode. A separate task was onboarding: a player without crypto knowledge should quickly understand the mechanics and want to buy other NFT characters.
 
-
-## Что я сделал
+## What I Did
 ::space 24
-**Боевая система** 
+**Combat System** 
 
-- пошаговый кор с фазами на основе механики Камень-Ножницы-Бумага.
-- Основные удары, скиллы и расходники.  
-- Просчитал баланс БС, скиллов и расходников  
-- систему матчмейкинга на основе рейтингов ЭЛО.
+- turn-based core with phases based on the Rock-Paper-Scissors mechanic.
+- Basic attacks, skills, and consumables.  
+- Calculated the balance of combat stats, skills, and consumables  
+- matchmaking system based on ELO ratings.
 
 ![Combat System](bv-combatsystem.png)![Screen Battle](bv-battle.png)
-*1. Схема боевой системы. 2. Экран PvP битвы. Первая этирация БС имела только основные удары, позже расширили до скилов и раходников. На экране битвы снизу в центре  распологается основное управления персонажем. Сверху вниз кнопки выбора дейсвтий по фазам хода: **расходник → скилы → основной удар → ход***
-*Скиллы и расходники были несколько раз переработаны.*
+*1. Combat system diagram. 2. PvP battle screen. The first iteration of the combat system had only basic attacks, later expanded to skills and consumables. On the battle screen, the main character control is located at the bottom center. From top to bottom, the action selection buttons by turn phases: **consumable → skills → basic attack → turn***
+*Skills and consumables were reworked several times.*
 ::space 32
 
-**Редкость и прокачка** 
+**Rarity and Progression** 
 
-- система Rarity - редкость атрибутов персонажей. 
-- В команде с GD разработали систему Character Upgrade. 
-- Отвечал за рассчёт баланса получения и роста eXP, зависимостей прокачки и тайминги.
+- Rarity system - attribute rarity of characters. 
+- Together with the GD, developed the Character Upgrade system. 
+- Responsible for calculating the balance of eXP acquisition and growth, progression dependencies, and timings.
 
 ![](bv-rarity.png)![](bv-characterupgrade.png)
-*Схема системы крафта слева и экран крафта с рецептами справа.*
+*Crafting system diagram on the left and the crafting screen with recipes on the right.*
 ::space 32
 
-**Инвентарь, крафт и расходники** 
+**Inventory, Crafting, and Consumables** 
 
-- дроп ресурсов после боя, которые используются в крафт или продаже на Маркетплейс; 
-- баланс дропа и крафта и рецептов расходников. 
+- resource drops after battle, which are used in crafting or sold on the Marketplace; 
+- balance of drops, crafting, and consumable recipes. 
 
 ![](bv-craft.png)![](bv-craftui.png)![](bv-battlewin.png)
-*1. Схема системы крафта. 2. Экран дропа ресурсов и награды после боя(при проигрыше или ничьей - игроки тоже получают награду в меньшей степени). 3. Экран крафта с рецептами.*
+*1. Crafting system diagram. 2. Resource drop and post-battle reward screen (on defeat or draw - players also receive a reward to a lesser extent). 3. Crafting screen with recipes.*
 ::space 32
 
-**Мета-гейм** 
+**Meta-game** 
 
-- Badges с условиями получения и описаниями; 
-- Staking персонажей с прибылью игровой валюты и энергии (пул в личном кабинете, разлив энергии по другим персанажам, продажа на Маркете); 
-- лиги и рейтинги игроков со статусами и рамками портрета (не реализованы)
+- Badges with acquisition conditions and descriptions; 
+- Character Staking with game currency and energy profit (pool in personal account, energy distribution to other characters, sale on the Market); 
+- leagues and player ratings with statuses and portrait frames (not implemented)
 ![](bv-staking.png)![](bv-badge.png)
-*Скрин экрана стейкинга и модальное окно с бэйджем за заслуги*
+*Staking screen screenshot and modal window with an achievement badge*
 ::space 32
 
-**Дополнительные игровые режимы** 
+**Additional Game Modes** 
 
-- гонки с кор-механикой, балансом, геймплеем и прокачкой болидов, ставками на соревнованиях и призом из общего фонда от числа участников; 
-- PvE-миссии с фармом лута, растущей сложностью мобов и шансом дропа. 
+- racing with core mechanics, balance, gameplay, and vehicle upgrades, bets on competitions, and a prize from a shared fund based on the number of participants; 
+- PvE missions with loot farming, increasing mob difficulty, and drop chance. 
 ![](bv-lab.png)![](bv-race.png)
-*Слева - экран PvE режима “Journey”. Справа - протитип режима “Racing”, который в последствии развился до полноценной самостоятельной игры со ставками. Оба режима находятся на этапе тестирования и пока что являются играбельными прототипами*
+*On the left - PvE mode screen "Journey". On the right - prototype of "Racing" mode, which later evolved into a full-fledged standalone game with bets. Both modes are in testing and are currently playable prototypes*
 ::space 32
 
-**Разработал долгосрочный мета-гейм Lands & Territories:** 
+**Developed long-term meta-game Lands & Territories:** 
 
-- полный цикл от покупки/аренды земли и добычи сырья до крафта компонентов и продажи на Маркетплейсе.
-- Описал в GDD логику зданий (Drilling rig, Factory, Warehouse), правила крафта и зависимости ресурсов (Energy, Ore, Chips).
+- full cycle from buying/renting land and extracting raw materials to crafting components and selling on the Marketplace.
+- Described building logic (Drilling rig, Factory, Warehouse), crafting rules, and resource dependencies (Energy, Ore, Chips) in the GDD.
 
-**Ключевая задача:** просчитать драфтовый баланс так, чтобы новичок без капитала мог встроиться в экономику (добыча сырья), а «киты» могли строить производственные империи.
+**Key task:** calculate the draft balance so that a beginner without capital could integrate into the economy (raw material extraction), and "whales" could build production empires.
 
-*Это был блок долгосрочной мета-прогрессии. Мы зафиксировали его в GDD и просчитали драфтовый баланс, чтобы понять, как он будет влиять на экономику на поздних этапах. Реализация не вошла в текущий скоуп прототипа, так как фокус был на боевой системе и хакатонной демо-версии, но документация готова к передаче в разработку*
+*This was a block of long-term meta-progression. We fixed it in the GDD and calculated the draft balance to understand how it would affect the economy in the later stages. Implementation was not included in the current prototype scope, as the focus was on the combat system and the hackathon demo version, but the documentation is ready for handover to development*
 ![](bv-Lands_and_territories.png)![](bv-Manufacturing_and_processes.png)
-*Схема производственного цикла (Industry Loop). Слева - общая логика владения землёй, справа - детальная карта крафта и переработки ресурсов, спроектированная для GDD*
+*Production cycle diagram (Industry Loop). On the left - general land ownership logic, on the right - detailed map of crafting and resource processing, designed for the GDD*
 ::space 32
 
-**Онбординг** 
+**Onboarding** 
 
-- выстроил путь игрока от покупки первого NFT до участия в PvP-сражениях, упростив сложные крипто-сущности до понятных игровых механик.
+- built the player journey from purchasing the first NFT to participating in PvP battles, simplifying complex crypto entities into understandable game mechanics.
 ![](bv-tutor1.png)![](bv-tutor2.png)
-*На первом скрине старт тутора в режиме Арены, который можно скипнуть. На втором скрине объяснение логики выбора действий*
+*The first screenshot shows the start of the tutorial in Arena mode, which can be skipped. The second screenshot explains the logic of action selection*
 
+## Result
 
-## Результат
+- Launched and tested concept: the project went from idea to playable prototype, successfully performed at the BinanceGameFi hackathon and took 3rd place.
 
-- Запущен и протестирован концепт: проект прошел путь от идеи до играбельного прототипа, успешно выступил на BinanceGameFi-хакатоне и занял призовое 3 место.
+- Built a sustainable Web3 economy: created a system of NFT characters, progression, and resource trading that encourages players to engage long-term.
 
-- Выстроена устойчивая Web3-экономика: создана система NFT-персонажей, прокачки и торговли ресурсами, которая стимулирует игроков к долгосрочному взаимодействию.
+- Formed a loyal community: the project attracted over 10K+ followers in the community, and the testing stage gathered about 1000 real players.
 
-- Сформировано лояльное комьюнити: проект привлек более 10K+ подписчиков в сообществе, а стадия тестирования собрала около 1000 реальных игроков.
+- Simplified the entry threshold: complex crypto jargon was successfully removed from the interface, which allowed attracting an audience unfamiliar with blockchain.
 
-- Упрощен порог входа: успешно убран сложный крипто-жаргон из интерфейса, что позволило привлечь аудиторию, не знакомую с блокчейном.
-
-- Масштабирование: концепт перерос в полноценный проект с трехлетним планом разработки и привлечённым финансированием.
+- Scaling: the concept grew into a full-fledged project with a three-year development plan and raised funding.
 
 ![](bv-profit.png)
-*Схема полного цикла Monetisation: желтыми линиями показан прямой источник прибыли для Игроков*
+*Full monetization cycle diagram: yellow lines show the direct source of profit for Players*
